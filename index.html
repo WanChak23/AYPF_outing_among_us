@@ -114,6 +114,14 @@
   <script>
     let assignments = {};
 
+    window.addEventListener('load', function() {
+      const saved = localStorage.getItem('amongUsAssignments');
+      if (saved) {
+        assignments = JSON.parse(saved);
+        alert('Previous roles loaded from save.');
+      }
+    });
+
     // Reveal the truth button logic
     document.querySelector('.reveal-btn').addEventListener('click', function() {
       if (!Object.keys(assignments).length) {
@@ -154,7 +162,10 @@
           assignments[person] = roles[index];
         });
         
-        alert('Roles assigned! Click on a person to see your role.');
+        // Save to localStorage
+        localStorage.setItem('amongUsAssignments', JSON.stringify(assignments));
+        
+        alert('Roles assigned and saved! Click on a person to see your role.');
       } else {
         // Cancelled
         alert('Cancelled.');
