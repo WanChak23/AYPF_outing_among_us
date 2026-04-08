@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f4f4f4;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 480px;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    button {
+      padding: 22px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #e8e8e8;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .generate-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .generate-btn:hover {
+      background: #e8e8e8;
+    }
+
+    .generate-btn:active {
+      transform: scale(0.95);
+    }
+    .reveal-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .reveal-btn:hover {
+      background: #e8e8e8;
+    }
+
+    .reveal-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid">
+    <button>Edwin</button>
+    <button>Cyrus</button>
+    <button>Ethan</button>
+    <button>John</button>
+    <button>Adonis</button>
+    <button>Christa</button>
+    <button>Dom</button>
+    <button>Stanley</button>
+    <button>Sarah</button>
+    <button>Tori</button>
+    <button>Fong Fong</button>
+    <button>Bing</button>
+  </div>
+
+
+  <button class="reveal-btn">Reveal the truth</button>
+  <button class="generate-btn">Generate</button>
+    
+    
+
+
+  <script>
+    let assignments = {};
+
+    // Reveal the truth button logic
+    document.querySelector('.reveal-btn').addEventListener('click', function() {
+      if (!Object.keys(assignments).length) {
+        alert('Roles not assigned yet. Click generate first.');
+        return;
+      }
+      if (confirm('Are you sure you want to reveal the truth?')) {
+        const groups = { im: [], de: [], dr: [], no: [] };
+        Object.entries(assignments).forEach(([name, role]) => {
+          if (groups[role]) {
+            groups[role].push(name);
+          }
+        });
+        let msg = '';
+        msg += `Imposters : ${groups.im.join(', ') || 'None'}\n`;
+        msg += `Detectives : ${groups.de.join(', ') || 'None'}\n`;
+        msg += `Drunk people : ${groups.dr.join(', ') || 'None'}\n`;
+        msg += `Normal people : ${groups.no.join(', ') || 'None'}`;
+        alert(msg);
+      }
+    });
+
+    document.querySelector('.generate-btn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to generate?')) {
+        // Confirmed
+        const people = ['Edwin', 'Cyrus', 'Ethan', 'John', 'Adonis', 'Christa', 'Dom', 'Stanley', 'Sarah', 'Tori', 'Fong Fong', 'Bing'];
+        const roles = ['im', 'im', 'de', 'de', 'dr', 'no', 'no', 'no', 'no', 'no', 'no', 'no'];
+        
+        // Shuffle roles
+        for (let i = roles.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [roles[i], roles[j]] = [roles[j], roles[i]];
+        }
+        
+        // Assign to people
+        assignments = {};
+        people.forEach((person, index) => {
+          assignments[person] = roles[index];
+        });
+        
+        alert('Roles assigned! Click on a person to see your role.');
+      } else {
+        // Cancelled
+        alert('Cancelled.');
+      }
+    });
+
+    // Add click listeners to person buttons
+    document.querySelectorAll('.grid button').forEach(button => {
+      button.addEventListener('click', function() {
+        const person = this.textContent;
+        if (assignments[person]) {
+          let message;
+          if (assignments[person] === 'im') {
+            message = `${person}: You are an imposter`;
+          } else if (assignments[person] === 'de') {
+            // Show detective the imposters
+            const imposters = Object.keys(assignments).filter(name => assignments[name] === 'im');
+            message = `${person}: You are a detective. The imposters are: ${imposters.join(', ')}`;
+          } else if (assignments[person] === 'dr') {
+            // Show doctor two random names (not themselves) as imposters
+            const others = Object.keys(assignments).filter(name => name !== person);
+            // Shuffle others
+            for (let i = others.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [others[i], others[j]] = [others[j], others[i]];
+            }
+            const fakeImposters = others.slice(0, 2);
+            message = `${person}: You are a detective. The imposters are: ${fakeImposters.join(', ')}`;
+          } else if (assignments[person] === 'no') {
+            message = `${person}: You are a normal person`;
+          } else {
+            message = `${person}: ${assignments[person]}`;
+          }
+          alert(message);
+        } else {
+          alert('Roles not assigned yet. Click generate first.');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
