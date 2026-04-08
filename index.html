@@ -64,6 +64,28 @@
     .generate-btn:active {
       transform: scale(0.95);
     }
+
+    .clear-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .clear-btn:hover {
+      background: #e8e8e8;
+    }
+
+    .clear-btn:active {
+      transform: scale(0.95);
+    }
     .reveal-btn {
       position: fixed;
       bottom: 20px;
@@ -104,6 +126,7 @@
     <button>Bing</button>
   </div>
 
+  <button class="clear-btn">Clear Data</button>
 
   <button class="reveal-btn">Reveal the truth</button>
   <button class="generate-btn">Generate</button>
@@ -141,6 +164,15 @@
         msg += `Drunk people : ${groups.dr.join(', ') || 'None'}\n`;
         msg += `Normal people : ${groups.no.join(', ') || 'None'}`;
         alert(msg);
+      }
+    });
+
+    // Clear data button logic
+    document.querySelector('.clear-btn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to clear all saved data?')) {
+        localStorage.removeItem('amongUsAssignments');
+        assignments = {};
+        alert('Data cleared.');
       }
     });
 
