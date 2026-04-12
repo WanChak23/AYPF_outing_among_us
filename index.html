@@ -202,7 +202,12 @@
         if (assignments[person]) {
           let message;
           if (assignments[person] === 'im') {
-            message = `${person}: You are an imposter`;
+            const imposters = Object.keys(assignments).filter(name => assignments[name] === 'im');
+            const otherImposters = imposters.filter(name => name !== person);
+            const otherText = otherImposters.length
+              ? ` ${otherImposters.join(', ')} ${otherImposters.length === 1 ? 'is' : 'are'} also an imposter`
+              : '';
+            message = `${person}: You are an imposter.${otherText}`;
           } else if (assignments[person] === 'de') {
             // Show detective the imposters
             const imposters = Object.keys(assignments).filter(name => assignments[name] === 'im');
